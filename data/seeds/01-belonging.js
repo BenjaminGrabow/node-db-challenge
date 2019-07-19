@@ -1,9 +1,6 @@
-
 exports.seed = function(knex) {
-  // Deletes ALL existing entries
   return knex('belonging').del()
     .then(function () {
-      // Inserts seed entries
       return knex('belonging').insert([
         {id: 1, project_id: 1, action_id: 1},
         {id: 2, project_id: 1, action_id: 2},
