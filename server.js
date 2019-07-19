@@ -48,9 +48,12 @@ function updateProject({ name, description, completed },id) {
 
 server.get('/project/:id', async (req, res, next) => {
   try {
-    const action = await getActionsForProject(req.params.id);
     const project = await getProjectById(req.params.id);
-    res.json({ project, actionsForProject: action});
+    const action = await getActionsForProject(req.params.id);
+    
+    project.map(project => {
+      res.json({ project, actions: action});
+    })
   } catch (error) {
     next(error);
   }
