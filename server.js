@@ -51,9 +51,13 @@ server.get('/project/:id', async (req, res, next) => {
     const project = await getProjectById(req.params.id);
     const action = await getActionsForProject(req.params.id);
     
-    project.map(project => {
-      res.json({ project, actions: action});
-    })
+    if (project && action) {
+      project.map(project => {
+        res.json({ project, actions: action});
+      })
+    } else {
+      res.status(400).json({ message: 'invalid Id ' });
+    } 
   } catch (error) {
     next(error);
   }
