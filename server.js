@@ -5,10 +5,7 @@ const server = express();
 server.use(express.json());
 
 function getActionsForProject(id) {
-  return db.select('actions.description', 'actions.notes', 'actions.id').from('belonging')
-  .innerJoin('actions', 'actions.id', 'belonging.action_id')
-  .innerJoin('projects', 'projects.id', 'belonging.project_id')
-  .where({ project_id: id  });
+  return db('actions').where('project_id', id)
 }
 
 function getProjectById(id) {
@@ -18,6 +15,15 @@ function getProjectById(id) {
 function getActionById(id) {
   return db('actions').where({ id });
 }
+
+function getContextForAction(id) {
+  return db.select('actions.notes', 'context.context').from('context')
+  .innerJoin('belonging', 'belonging.context_id', 'context.id')
+  .innerJoin('actions', 'belonging.action_id', 'actions.id')
+  // .where('conte');
+}
+
+
 
 function addAction(action) {
   return db('actions').insert(action);
@@ -55,6 +61,23 @@ server.get('/project/:id', async (req, res, next) => {
       project.map(project => {
         res.json({ project, actions: action});
       })
+    } else {
+      res.status(400).json({ message: 'invalid Id ' });
+    } 
+  } catch (error) {
+    next(error);
+  }
+});
+
+server.get('/action/:id', async (req, res, next) => {
+  try {
+    const action = await getContextForAction(req.params.id);
+    // const action = await getActionsForProject(req.params.id);
+    
+    if (action) {
+      // project.map(project => {
+        res.json({ project, actions: action});
+      // })
     } else {
       res.status(400).json({ message: 'invalid Id ' });
     } 

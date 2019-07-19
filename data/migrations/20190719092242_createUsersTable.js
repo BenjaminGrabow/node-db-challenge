@@ -11,25 +11,31 @@ exports.up = function(knex) {
       table.text('description', 100).notNullable();
       table.text('notes', 50).notNullable();
       table.boolean('completed').defaultTo(false);
-    })
-    .createTable("belonging", table => {
-      table.increments();
       table
         .integer("project_id")
         .unsigned()
         .notNullable()
         .references("id")
         .inTable("projects")
-        .onUpdate('CASCADE')
-        .onDelete('CASCADE')
-      table
-        .integer("action_id")
-        .unsigned()
-        .notNullable()
-        .references("id")
-        .inTable("actions")
-        .onUpdate('CASCADE')
-        .onDelete('CASCADE');
+    })
+    .createTable("context", table => {
+      table.increments();
+      table.text('context', 50).notNullable()
+      })
+      .createTable('belonging', table => {
+        table.increments();
+        table
+          .integer("action_id")
+          .unsigned()
+          .notNullable()
+          .references("id")
+          .inTable("actions")
+          table
+          .integer("context_id")
+          .unsigned()
+          .notNullable()
+          .references("id")
+          .inTable("context")
       });
 };
 
@@ -37,5 +43,5 @@ exports.down = function(knex) {
   return knex.schema
       .dropTableIfExists('projects')
       .dropTableIfExists('actions')
-      .dropTableIfExists('belonging')
+      .dropTableIfExists('context')
 };
